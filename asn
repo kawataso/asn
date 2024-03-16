@@ -970,7 +970,7 @@ TraceASPath(){
 
 	# start the mtr trace
 	DebugPrint "${yellow}mtr → $host_to_trace ($MTR_ROUNDS rounds)${default}"
-	mtr_output=$(mtr -C -n -c"$MTR_ROUNDS" "$host_to_trace" | tail -n +2)
+	mtr_output=$(mtr -a "$TRACE_FROM_ADDR" -C -n -c"$MTR_ROUNDS" "$host_to_trace" | tail -n +2)
 	declare -a tracehops_array
 	declare -a aspath_array
 	# initialize the aspath array with our source AS
@@ -3942,8 +3942,9 @@ json_resultcount=0
 # 	in this mode, getopts sets optchar to:
 # 	'?' -> unknown option
 # 	':' -> missing mandatory parameter to the option
-optspec=":hvmljJsgn:t:d:o:a:c:u:"
+optspec=":hvmljJsgn:t:d:o:a:c:u:f:"
 
+TRACE_FROM_ADDR="0.0.0.0"
 FORCE_ORGSEARCH=false
 SUGGEST_SEARCH=false
 SERVER_MODE=false
@@ -4031,6 +4032,9 @@ while getopts "$optspec" optchar; do {
 			JSON_OUTPUT=true
 			JSON_PRETTY=true
 			# GetFullParamsFromCurrentPosition "$@"
+			;;
+		"f")
+			TRACE_FROM_ADDR="$OPTARG"
 			;;
 		"l")
 			SERVER_MODE=true
